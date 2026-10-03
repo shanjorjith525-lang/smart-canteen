@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Canteen - Analytics</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .header p {
+            color: #cbd5e1;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .selector {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .selector a {
+            display: inline-block;
+            padding: 11px 18px;
+            margin-right: 8px;
+            margin-top: 8px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            background: #2563eb;
+        }
+
+        .selector a.month {
+            background: #16a34a;
+        }
+
+        .selector a.dashboard {
+            background: #374151;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .value {
+            margin-top: 10px;
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        .highlights {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .highlight {
+            padding: 20px;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+
+        .highlight h3 {
+            margin-top: 0;
+        }
+
+        .chart-box {
+            height: 400px;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+        }
+
+        @media (max-width: 900px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .highlights {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 95%;
+            }
+
+            .chart-box {
+                height: 300px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+    <h1>🍽️ Smart Canteen</h1>
+
+    <p>
+        {{ period_name }}
+    </p>
+
+</div>
+
+
+<div class="container">
+
+
+    <!-- PERIOD SELECTOR -->
+
+    <div class="selector">
+
+        <h2>
+            📅 {{ period_name }}
+        </h2>
+
+        <p>
+            {{ start_date }} → {{ end_date }}
+        </p>
+
+        <a href="{% url 'period_analytics' %}?period=week">
+            📊 Weekly
+        </a>
+
+        <a
+            href="{% url 'period_analytics' %}?period=month"
+            class="month"
+        >
+            📈 Monthly
+        </a>
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="dashboard"
+        >
+            ⬅ Admin Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="cards">
+
+        <div class="card">
+
+            <h3>📦 Total Orders</h3>
+
+            <div class="value">
+                {{ total_orders }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🍛 Food Consumed</h3>
+
+            <div class="value">
+                {{ food_consumed }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🗑️ Food Waste</h3>
+
+            <div class="value">
+                {{ total_waste }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>💰 Total Sales</h3>
+
+            <div class="value">
+                ₹{{ total_sales }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- HIGHLIGHTS -->
+
+    <div class="section">
+
+        <h2>⭐ Highlights</h2>
+
+        <div class="highlights">
+
+            <div class="highlight">
+
+                <h3>
+                    🍛 Most Ordered Food
+                </h3>
+
+                {% if most_ordered %}
+
+                    <strong>
+                        {{ most_ordered.food__name }}
+                    </strong>
+
+                    <p>
+                        Quantity:
+                        {{ most_ordered.total }}
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        No completed orders.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="highlight">
+
+                <h3>
+                    🗑️ Most Wasted Food
+                </h3>
+
+                {% if most_wasted %}
+
+                    <strong>
+                        {{ most_wasted.food__name }}
+                    </strong>
+
+                    <p>
+                        Waste:
+                        {{ most_wasted.total }}
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        No waste recorded.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="highlight">
+
+                <h3>
+                    ♻️ Waste Percentage
+                </h3>
+
+                <strong>
+                    {{ waste_percentage }}%
+                </strong>
+
+            </div>
+
+
+            <div class="highlight">
+
+                <h3>
+                    📅 Analysis Period
+                </h3>
+
+                <strong>
+                    {{ start_date }}
+                    →
+                    {{ end_date }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHART -->
+
+    <div class="section">
+
+        <h2>
+            📊 Food Consumption vs Waste
+        </h2>
+
+        <div class="chart-box">
+
+            <canvas id="analyticsChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONSUMPTION -->
+
+    <div class="section">
+
+        <h2>
+            🍛 Food Consumption
+        </h2>
+
+        {% if food_consumption %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Food</th>
+                    <th>Consumed</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for item in food_consumption %}
+
+                <tr>
+
+                    <td>
+                        {{ item.food__name }}
+                    </td>
+
+                    <td>
+                        {{ item.total }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="empty">
+            No consumption data available.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- WASTE -->
+
+    <div class="section">
+
+        <h2>
+            🗑️ Food Waste
+        </h2>
+
+        {% if food_waste %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Food</th>
+                    <th>Waste</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for item in food_waste %}
+
+                <tr>
+
+                    <td>
+                        {{ item.food__name }}
+                    </td>
+
+                    <td>
+                        {{ item.total }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="empty">
+            No waste data available.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+    const labels = {{ chart_labels|safe }};
+
+    const consumption = {{ chart_consumption|safe }};
+
+    const waste = {{ chart_waste|safe }};
+
+
+    const ctx = document
+        .getElementById('analyticsChart')
+        .getContext('2d');
+
+
+    new Chart(ctx, {
+
+        type: 'bar',
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+                    label: 'Food Consumed',
+                    data: consumption
+                },
+
+                {
+                    label: 'Food Waste',
+                    data: waste
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+                        precision: 0
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+</script>
+
+
+</body>
+
+</html>

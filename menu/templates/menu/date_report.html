@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Canteen - Date Report</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            color: #cbd5e1;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .top-bar h2 {
+            margin-top: 0;
+        }
+
+        form {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        input[type="date"] {
+            padding: 11px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button,
+        .btn {
+            border: none;
+            padding: 11px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .search-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .pdf-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        .excel-btn {
+            background: #16a34a;
+            color: white;
+        }
+
+        .admin-btn {
+            background: #374151;
+            color: white;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .card .value {
+            margin-top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .section {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 380px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        .empty {
+            color: #6b7280;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 95%;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 9px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>🍽️ Smart Canteen</h1>
+    <p>Date-wise Food Management Report</p>
+</div>
+
+<div class="container">
+
+    <!-- DATE SELECTION -->
+    <div class="top-bar">
+
+        <h2>📅 Select Report Date</h2>
+
+        <form method="GET">
+
+            <input
+                type="date"
+                name="date"
+                value="{{ report_date|date:'Y-m-d' }}"
+            >
+
+            <button
+                type="submit"
+                class="search-btn"
+            >
+                🔍 Generate Report
+            </button>
+
+        </form>
+
+        <div class="buttons">
+
+            <a
+                href="{% url 'pdf_report' %}?date={{ report_date|date:'Y-m-d' }}"
+                class="btn pdf-btn"
+            >
+                📄 Download PDF
+            </a>
+
+            <a
+                href="{% url 'excel_report' %}?date={{ report_date|date:'Y-m-d' }}"
+                class="btn excel-btn"
+            >
+                📊 Download Excel
+            </a>
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="btn admin-btn"
+            >
+                ⬅ Admin Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>📦 Total Orders</h3>
+
+            <div class="value">
+                {{ total_orders }}
+            </div>
+        </div>
+
+
+        <div class="card">
+            <h3>🍛 Food Consumed</h3>
+
+            <div class="value">
+                {{ food_consumed }}
+            </div>
+        </div>
+
+
+        <div class="card">
+            <h3>🗑️ Food Waste</h3>
+
+            <div class="value">
+                {{ total_waste }}
+            </div>
+        </div>
+
+
+        <div class="card">
+            <h3>💰 Total Sales</h3>
+
+            <div class="value">
+                ₹{{ total_sales }}
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- CHART -->
+
+    <div class="section">
+
+        <h2>📈 Food Consumption vs Waste</h2>
+
+        <div class="chart-container">
+
+            <canvas id="foodChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+    <!-- FOOD CONSUMPTION -->
+
+    <div class="section">
+
+        <h2>🍛 Food Consumption</h2>
+
+        {% if food_consumption %}
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Food</th>
+                    <th>Consumed Quantity</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for item in food_consumption %}
+
+                <tr>
+
+                    <td>
+                        {{ item.food__name }}
+                    </td>
+
+                    <td>
+                        {{ item.total }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+            <div class="empty">
+                No completed food consumption recorded for this date.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- FOOD WASTE -->
+
+    <div class="section">
+
+        <h2>🗑️ Food Waste</h2>
+
+        {% if food_waste %}
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Food</th>
+                    <th>Waste Quantity</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for item in food_waste %}
+
+                <tr>
+
+                    <td>
+                        {{ item.food__name }}
+                    </td>
+
+                    <td>
+                        {{ item.total }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+            <div class="empty">
+                No food waste recorded for this date.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+    const labels = {{ chart_labels|safe }};
+    const consumption = {{ chart_consumption|safe }};
+    const waste = {{ chart_waste|safe }};
+
+    const ctx = document
+        .getElementById('foodChart')
+        .getContext('2d');
+
+    new Chart(ctx, {
+
+        type: 'bar',
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+                    label: 'Food Consumed',
+                    data: consumption
+                },
+
+                {
+                    label: 'Food Waste',
+                    data: waste
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+                        precision: 0
+                    }
+
+                }
+
+            }
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

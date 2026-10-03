@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Canteen - Waste Analysis</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .header p {
+            color: #cbd5e1;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .buttons,
+        .section,
+        .card {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .buttons {
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 17px;
+            margin: 5px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .blue {
+            background: #2563eb;
+        }
+
+        .green {
+            background: #16a34a;
+        }
+
+        .dark {
+            background: #374151;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            padding: 23px;
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .value {
+            margin-top: 10px;
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        .section {
+            padding: 23px;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        .chart-box {
+            height: 400px;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 25px;
+            color: #6b7280;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #6b7280;
+        }
+
+        @media (max-width: 800px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 95%;
+            }
+
+            .chart-box {
+                height: 300px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+    <h1>
+        🍽️ Smart Canteen
+    </h1>
+
+    <p>
+        Food Waste Reason Analysis
+    </p>
+
+</div>
+
+
+<div class="container">
+
+
+    <!-- BUTTONS -->
+
+    <div class="buttons">
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="btn dark"
+        >
+            ⬅ Admin Dashboard
+        </a>
+
+        <a
+            href="{% url 'date_report' %}"
+            class="btn blue"
+        >
+            📅 Date Report
+        </a>
+
+        <a
+            href="{% url 'period_analytics' %}?period=month"
+            class="btn green"
+        >
+            📈 Monthly Analytics
+        </a>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <h3>
+                🗑️ Total Food Waste
+            </h3>
+
+            <div class="value">
+                {{ total_waste }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                ⚠️ Most Common Waste Reason
+            </h3>
+
+            <div class="value">
+                {{ most_common_reason }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                🍛 Most Wasted Food
+            </h3>
+
+            <div class="value">
+
+                {% if most_wasted %}
+
+                    {{ most_wasted.food__name }}
+
+                {% else %}
+
+                    No Data
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHART -->
+
+    <div class="section">
+
+        <h2>
+            📊 Waste by Reason
+        </h2>
+
+        {% if waste_by_reason %}
+
+        <div class="chart-box">
+
+            <canvas id="wasteChart"></canvas>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty">
+            No food waste data available.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- REASON TABLE -->
+
+    <div class="section">
+
+        <h2>
+            🗑️ Waste Reason Details
+        </h2>
+
+        {% if waste_by_reason %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Waste Reason
+                    </th>
+
+                    <th>
+                        Quantity
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for item in waste_by_reason %}
+
+                <tr>
+
+                    <td>
+
+                        {% if item.reason == 'leftover' %}
+                            🍱 Leftover Food
+
+                        {% elif item.reason == 'expired' %}
+                            ⏰ Expired
+
+                        {% elif item.reason == 'damaged' %}
+                            💔 Damaged
+
+                        {% elif item.reason == 'overcooked' %}
+                            🔥 Overcooked
+
+                        {% elif item.reason == 'spilled' %}
+                            💧 Spilled
+
+                        {% else %}
+                            📦 Other
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ item.total }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="empty">
+            No waste records available.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- FOOD WASTE TABLE -->
+
+    <div class="section">
+
+        <h2>
+            🍛 Food-wise Waste
+        </h2>
+
+        {% if food_waste %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Food
+                    </th>
+
+                    <th>
+                        Total Waste
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for item in food_waste %}
+
+                <tr>
+
+                    <td>
+                        {{ item.food__name }}
+                    </td>
+
+                    <td>
+                        {{ item.total }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="empty">
+            No food waste records available.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+<div class="footer">
+
+    Smart Canteen Management System
+
+</div>
+
+
+<script>
+
+    const labels = {{ chart_labels|safe }};
+
+    const values = {{ chart_values|safe }};
+
+    const ctx = document
+        .getElementById('wasteChart')
+        .getContext('2d');
+
+
+    new Chart(ctx, {
+
+        type: 'doughnut',
+
+        data: {
+
+            labels: labels,
+
+            datasets: [
+
+                {
+                    label: 'Food Waste',
+                    data: values
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    position: 'right'
+                }
+
+            }
+
+        }
+
+    });
+
+</script>
+
+
+</body>
+
+</html>

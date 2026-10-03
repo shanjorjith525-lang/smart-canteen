@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Smart Canteen Analytics
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family: Arial, sans-serif;
+
+            background: #f4f6fb;
+
+            color: #333;
+        }
+
+
+        /* HEADER */
+
+        .header {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4169e1,
+                    #6a5acd
+                );
+
+            color: white;
+
+            padding: 35px 20px;
+        }
+
+
+        .header-content {
+
+            max-width: 1100px;
+
+            margin: auto;
+        }
+
+
+        .header h1 {
+
+            margin: 0;
+
+            font-size: 34px;
+        }
+
+
+        .header p {
+
+            margin-top: 10px;
+
+            font-size: 16px;
+        }
+
+
+        /* CONTAINER */
+
+        .container {
+
+            max-width: 1100px;
+
+            margin: 40px auto;
+
+            padding: 0 20px;
+        }
+
+
+        /* STAT GRID */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(220px, 1fr)
+                );
+
+            gap: 20px;
+
+            margin-bottom: 35px;
+        }
+
+
+        .stat-card {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 15px;
+
+            text-align: center;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,0.08);
+        }
+
+
+        .icon {
+
+            font-size: 40px;
+        }
+
+
+        .stat-card h3 {
+
+            margin: 12px 0 8px;
+
+            color: #555;
+        }
+
+
+        .number {
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            color: #4169e1;
+        }
+
+
+        .waste {
+
+            color: #dc3545;
+        }
+
+
+        .sales {
+
+            color: #28a745;
+        }
+
+
+        /* SECTION */
+
+        .section {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 15px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,0.08);
+        }
+
+
+        .section h2 {
+
+            margin-top: 0;
+
+            color: #4169e1;
+        }
+
+
+        /* TABLE */
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+
+        th,
+        td {
+
+            padding: 14px;
+
+            border-bottom:
+                1px solid #eee;
+
+            text-align: left;
+        }
+
+
+        th {
+
+            background: #f4f6fb;
+
+            color: #555;
+        }
+
+
+        /* BAR */
+
+        .bar-container {
+
+            background: #eee;
+
+            height: 18px;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+            min-width: 100px;
+        }
+
+
+        .bar {
+
+            height: 100%;
+
+            background: #4169e1;
+        }
+
+
+        .waste-bar {
+
+            background: #dc3545;
+        }
+
+
+        /* BUTTON */
+
+        .button {
+
+            display: inline-block;
+
+            padding: 12px 22px;
+
+            background: #4169e1;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+        }
+
+
+        .button:hover {
+
+            background: #3154c7;
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .header h1 {
+
+                font-size: 27px;
+            }
+
+
+            .section {
+
+                overflow-x: auto;
+            }
+
+
+            table {
+
+                min-width: 600px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <div class="header-content">
+
+        <h1>
+            📊 Smart Canteen Analytics
+        </h1>
+
+        <p>
+            Daily Food Consumption & Waste Management
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- MAIN -->
+
+<div class="container">
+
+
+    <h2>
+        Today's Report
+    </h2>
+
+    <p>
+        Date:
+        <strong>
+            {{ today }}
+        </strong>
+    </p>
+
+
+
+    <!-- STATISTICS -->
+
+    <div class="stats">
+
+
+        <!-- CONSUMPTION -->
+
+        <div class="stat-card">
+
+            <div class="icon">
+                🍛
+            </div>
+
+            <h3>
+                Food Consumed
+            </h3>
+
+            <div class="number">
+                {{ total_consumed }}
+            </div>
+
+            <p>
+                portions
+            </p>
+
+        </div>
+
+
+
+        <!-- WASTE -->
+
+        <div class="stat-card">
+
+            <div class="icon">
+                🗑️
+            </div>
+
+            <h3>
+                Food Waste
+            </h3>
+
+            <div class="number waste">
+                {{ total_waste }}
+            </div>
+
+            <p>
+                portions
+            </p>
+
+        </div>
+
+
+
+        <!-- ORDERS -->
+
+        <div class="stat-card">
+
+            <div class="icon">
+                📦
+            </div>
+
+            <h3>
+                Total Orders
+            </h3>
+
+            <div class="number">
+                {{ total_orders }}
+            </div>
+
+            <p>
+                orders
+            </p>
+
+        </div>
+
+
+
+        <!-- SALES -->
+
+        <div class="stat-card">
+
+            <div class="icon">
+                💰
+            </div>
+
+            <h3>
+                Today's Sales
+            </h3>
+
+            <div class="number sales">
+                ₹{{ total_sales }}
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- CONSUMPTION -->
+
+    <div class="section">
+
+        <h2>
+            🍛 Food Consumption
+        </h2>
+
+
+        {% if food_consumption %}
+
+        <table>
+
+            <tr>
+
+                <th>
+                    Food
+                </th>
+
+                <th>
+                    Consumed
+                </th>
+
+                <th>
+                    Visual
+                </th>
+
+            </tr>
+
+
+            {% for item in food_consumption %}
+
+            <tr>
+
+                <td>
+                    {{ item.food__name }}
+                </td>
+
+                <td>
+                    {{ item.total }}
+                    portions
+                </td>
+
+                <td>
+
+                    <div class="bar-container">
+
+                        <div
+                            class="bar"
+                            style="width:
+                            {% widthratio item.total total_consumed 100 %}%"
+                        ></div>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <p>
+            No completed food orders today.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+
+
+    <!-- WASTE -->
+
+    <div class="section">
+
+        <h2>
+            🗑️ Food Waste
+        </h2>
+
+
+        {% if food_waste %}
+
+        <table>
+
+            <tr>
+
+                <th>
+                    Food
+                </th>
+
+                <th>
+                    Waste
+                </th>
+
+                <th>
+                    Visual
+                </th>
+
+            </tr>
+
+
+            {% for item in food_waste %}
+
+            <tr>
+
+                <td>
+                    {{ item.food__name }}
+                </td>
+
+                <td>
+                    {{ item.total }}
+                    portions
+                </td>
+
+                <td>
+
+                    <div class="bar-container">
+
+                        <div
+                            class="bar waste-bar"
+                            style="width:
+                            {% widthratio item.total total_waste 100 %}%"
+                        ></div>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <p>
+            🎉 No food waste recorded today.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+
+
+    <!-- RECENT WASTE -->
+
+    <div class="section">
+
+        <h2>
+            📝 Recent Waste Records
+        </h2>
+
+
+        {% if recent_waste %}
+
+        <table>
+
+            <tr>
+
+                <th>
+                    Food
+                </th>
+
+                <th>
+                    Quantity
+                </th>
+
+                <th>
+                    Reason
+                </th>
+
+                <th>
+                    Date
+                </th>
+
+            </tr>
+
+
+            {% for waste in recent_waste %}
+
+            <tr>
+
+                <td>
+                    {{ waste.food.name }}
+                </td>
+
+                <td>
+                    {{ waste.quantity }}
+                </td>
+
+                <td>
+                    {{ waste.get_reason_display }}
+                </td>
+
+                <td>
+                    {{ waste.date }}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <p>
+            No waste records available.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+
+
+    <a
+        href="{% url 'food_list' %}"
+        class="button"
+    >
+        ← Back to Menu
+    </a>
+
+
+</div>
+
+
+</body>
+
+</html>

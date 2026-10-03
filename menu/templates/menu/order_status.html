@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Order Status - Smart Canteen</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eef2ff, #f0fdf4);
+            color: #1f2937;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            background: #111827;
+            color: white;
+            padding: 18px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 9px 14px;
+            border-radius: 7px;
+            font-size: 14px;
+            transition: .3s;
+        }
+
+        .nav-links a:hover {
+            background: #374151;
+        }
+
+
+        /* PAGE */
+
+        .page {
+            min-height: calc(100vh - 70px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 45px 20px;
+        }
+
+
+        /* CARD */
+
+        .status-card {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 22px;
+            padding: 40px;
+            box-shadow: 0 20px 55px rgba(0,0,0,.10);
+            animation: cardIn .7s ease-out;
+        }
+
+        @keyframes cardIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(35px) scale(.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+        }
+
+
+        /* HEADER */
+
+        .header {
+            text-align: center;
+        }
+
+        .header-icon {
+            font-size: 55px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+
+        }
+
+        .header h1 {
+            margin: 8px 0;
+            font-size: 30px;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+
+        /* ORDER INFO */
+
+        .order-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 17px;
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 7px;
+        }
+
+        .info-value {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+
+        /* TRACKING */
+
+        .tracking {
+            margin-top: 35px;
+        }
+
+        .tracking-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+
+        .timeline {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            margin: 0 25px;
+        }
+
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            top: 24px;
+            left: 25px;
+            right: 25px;
+            height: 5px;
+            background: #e5e7eb;
+            border-radius: 5px;
+        }
+
+
+        .progress-line {
+            position: absolute;
+            top: 24px;
+            left: 25px;
+            height: 5px;
+            background: #16a34a;
+            border-radius: 5px;
+            transition: width 1s ease;
+            z-index: 1;
+        }
+
+
+        .step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 25%;
+        }
+
+
+        .circle {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            font-weight: bold;
+            border: 4px solid white;
+            transition: .5s;
+        }
+
+
+        .step.active .circle,
+        .step.completed .circle {
+            background: #16a34a;
+            color: white;
+            box-shadow: 0 0 0 5px #dcfce7;
+        }
+
+
+        .step.current .circle {
+            animation: currentPulse 1.5s infinite;
+        }
+
+
+        @keyframes currentPulse {
+
+            0%, 100% {
+                box-shadow: 0 0 0 5px #dcfce7;
+            }
+
+            50% {
+                box-shadow: 0 0 0 11px rgba(34,197,94,.12);
+            }
+
+        }
+
+
+        .step-title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+
+        .step-subtitle {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+
+        /* STATUS MESSAGE */
+
+        .current-status {
+            margin-top: 35px;
+            padding: 17px;
+            border-radius: 12px;
+            text-align: center;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+
+
+        /* BUTTONS */
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 9px;
+            font-weight: bold;
+            transition: .25s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0,0,0,.12);
+        }
+
+        .menu-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .orders-btn {
+            background: #111827;
+            color: white;
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 650px) {
+
+            .status-card {
+                padding: 25px 18px;
+            }
+
+            .order-info {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline {
+                margin: 0 5px;
+            }
+
+            .timeline::before {
+                left: 20px;
+                right: 20px;
+            }
+
+            .progress-line {
+                left: 20px;
+            }
+
+            .circle {
+                width: 42px;
+                height: 42px;
+                font-size: 17px;
+            }
+
+            .step-title {
+                font-size: 11px;
+            }
+
+            .step-subtitle {
+                display: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        🍽️ Smart Canteen
+    </div>
+
+    <div class="nav-links">
+
+        <a href="{% url 'food_list' %}">
+            Home
+        </a>
+
+        <a href="{% url 'my_orders' %}">
+            My Orders
+        </a>
+
+        <a href="{% url 'customer_dashboard' %}">
+            Dashboard
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- PAGE -->
+
+<div class="page">
+
+    <div class="status-card">
+
+
+        <!-- HEADER -->
+
+        <div class="header">
+
+            <div class="header-icon">
+                📦
+            </div>
+
+            <h1>
+                Order Tracking
+            </h1>
+
+            <p>
+                Track your food order in real time
+            </p>
+
+        </div>
+
+
+
+        <!-- ORDER INFO -->
+
+        <div class="order-info">
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Order ID
+                </div>
+
+                <div class="info-value">
+                    #{{ order.id }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Food
+                </div>
+
+                <div class="info-value">
+                    🍛 {{ order.food.name }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Quantity
+                </div>
+
+                <div class="info-value">
+                    {{ order.quantity }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TRACKING -->
+
+        <div class="tracking">
+
+            <div class="tracking-title">
+                Order Progress
+            </div>
+
+
+            <div class="timeline">
+
+
+                <div
+                    class="progress-line"
+                    id="progressLine"
+                ></div>
+
+
+                <!-- PENDING -->
+
+                <div
+                    class="step"
+                    data-status="pending"
+                >
+
+                    <div class="circle">
+                        ✓
+                    </div>
+
+                    <div class="step-title">
+                        Pending
+                    </div>
+
+                    <div class="step-subtitle">
+                        Order received
+                    </div>
+
+                </div>
+
+
+                <!-- PREPARING -->
+
+                <div
+                    class="step"
+                    data-status="preparing"
+                >
+
+                    <div class="circle">
+                        👨‍🍳
+                    </div>
+
+                    <div class="step-title">
+                        Preparing
+                    </div>
+
+                    <div class="step-subtitle">
+                        Being prepared
+                    </div>
+
+                </div>
+
+
+                <!-- READY -->
+
+                <div
+                    class="step"
+                    data-status="ready"
+                >
+
+                    <div class="circle">
+                        🍱
+                    </div>
+
+                    <div class="step-title">
+                        Ready
+                    </div>
+
+                    <div class="step-subtitle">
+                        Ready to collect
+                    </div>
+
+                </div>
+
+
+                <!-- COMPLETED -->
+
+                <div
+                    class="step"
+                    data-status="completed"
+                >
+
+                    <div class="circle">
+                        ✓
+                    </div>
+
+                    <div class="step-title">
+                        Completed
+                    </div>
+
+                    <div class="step-subtitle">
+                        Order completed
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- CURRENT STATUS -->
+
+        <div
+            class="current-status"
+            id="currentStatus"
+        >
+            Checking order status...
+        </div>
+
+
+
+        <!-- BUTTONS -->
+
+        <div class="buttons">
+
+            <a
+                href="{% url 'my_orders' %}"
+                class="btn orders-btn"
+            >
+                🛒 My Orders
+            </a>
+
+            <a
+                href="{% url 'food_list' %}"
+                class="btn menu-btn"
+            >
+                🍛 Back to Menu
+            </a>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- STATUS SCRIPT -->
+
+<script>
+
+    const currentStatus = "{{ order.status }}";
+
+    const steps = [
+        "pending",
+        "preparing",
+        "ready",
+        "completed"
+    ];
+
+    const statusMessages = {
+
+        pending:
+            "⏳ Your order has been received and is waiting to be prepared.",
+
+        preparing:
+            "👨‍🍳 Your food is currently being prepared.",
+
+        ready:
+            "🍱 Your order is ready! Please collect it from the canteen.",
+
+        completed:
+            "🎉 Order completed successfully. Thank you!"
+
+    };
+
+
+    const currentIndex =
+        steps.indexOf(currentStatus);
+
+
+    const stepElements =
+        document.querySelectorAll(".step");
+
+
+    stepElements.forEach(
+        (step, index) => {
+
+            if (index < currentIndex) {
+
+                step.classList.add(
+                    "completed"
+                );
+
+            }
+
+            if (index === currentIndex) {
+
+                step.classList.add(
+                    "active",
+                    "current"
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+        Calculate progress line.
+        0% = Pending
+        33% = Preparing
+        66% = Ready
+        100% = Completed
+    */
+
+    const progress =
+        currentIndex / (steps.length - 1) * 100;
+
+
+    document.getElementById(
+        "progressLine"
+    ).style.width = progress + "%";
+
+
+    document.getElementById(
+        "currentStatus"
+    ).textContent =
+        statusMessages[currentStatus]
+        || "Order status updated.";
+
+</script>
+
+
+</body>
+
+</html>

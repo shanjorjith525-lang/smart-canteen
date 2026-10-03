@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Customer Dashboard - Smart Canteen
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family: Arial, sans-serif;
+
+            background: #f5f7fb;
+
+            color: #333;
+        }
+
+
+        /* HEADER */
+
+        .header {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #4169e1,
+                    #6a5acd
+                );
+
+            color: white;
+
+            padding: 35px 20px;
+        }
+
+
+        .header-content {
+
+            max-width: 1000px;
+
+            margin: auto;
+        }
+
+
+        .header h1 {
+
+            margin: 0;
+
+            font-size: 34px;
+        }
+
+
+        .header p {
+
+            margin-top: 10px;
+
+            font-size: 17px;
+        }
+
+
+        /* CONTAINER */
+
+        .container {
+
+            max-width: 1000px;
+
+            margin: 40px auto;
+
+            padding: 0 20px;
+        }
+
+
+        /* WELCOME */
+
+        .welcome {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 15px;
+
+            margin-bottom: 30px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,0.08);
+        }
+
+
+        .welcome h2 {
+
+            color: #4169e1;
+
+            margin-top: 0;
+        }
+
+
+        /* STAT GRID */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(200px, 1fr)
+                );
+
+            gap: 20px;
+        }
+
+
+        /* CARD */
+
+        .card {
+
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 15px;
+
+            text-align: center;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,0.08);
+        }
+
+
+        .icon {
+
+            font-size: 40px;
+        }
+
+
+        .card h3 {
+
+            margin:
+                12px 0 8px;
+
+            color: #555;
+        }
+
+
+        .number {
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            color: #4169e1;
+        }
+
+
+        .money {
+
+            color: #28a745;
+        }
+
+
+        /* BUTTONS */
+
+        .buttons {
+
+            text-align: center;
+
+            margin-top: 35px;
+        }
+
+
+        .button {
+
+            display: inline-block;
+
+            padding: 13px 22px;
+
+            margin: 7px;
+
+            background: #4169e1;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+        }
+
+
+        .button:hover {
+
+            background: #3154c7;
+        }
+
+
+        .menu-button {
+
+            background: #28a745;
+        }
+
+
+        .logout-button {
+
+            background: #dc3545;
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .header {
+
+                text-align: center;
+            }
+
+
+            .header h1 {
+
+                font-size: 28px;
+            }
+
+
+            .container {
+
+                margin-top: 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <div class="header-content">
+
+        <h1>
+            📊 Customer Dashboard
+        </h1>
+
+        <p>
+            Smart Canteen
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- MAIN -->
+
+<div class="container">
+
+
+    <!-- WELCOME -->
+
+    <div class="welcome">
+
+        <h2>
+            Welcome,
+            {{ request.user.username }}
+            👋
+        </h2>
+
+        <p>
+            Here is your Smart Canteen
+            order summary.
+        </p>
+
+    </div>
+
+
+
+    <!-- STATISTICS -->
+
+    <div class="stats">
+
+
+        <!-- TOTAL ORDERS -->
+
+        <div class="card">
+
+            <div class="icon">
+                📦
+            </div>
+
+            <h3>
+                Total Orders
+            </h3>
+
+            <div class="number">
+                {{ total_orders }}
+            </div>
+
+        </div>
+
+
+
+        <!-- PENDING -->
+
+        <div class="card">
+
+            <div class="icon">
+                🕐
+            </div>
+
+            <h3>
+                Pending
+            </h3>
+
+            <div class="number">
+                {{ pending_orders }}
+            </div>
+
+        </div>
+
+
+
+        <!-- PREPARING -->
+
+        <div class="card">
+
+            <div class="icon">
+                👨‍🍳
+            </div>
+
+            <h3>
+                Preparing
+            </h3>
+
+            <div class="number">
+                {{ preparing_orders }}
+            </div>
+
+        </div>
+
+
+
+        <!-- READY -->
+
+        <div class="card">
+
+            <div class="icon">
+                🍱
+            </div>
+
+            <h3>
+                Ready
+            </h3>
+
+            <div class="number">
+                {{ ready_orders }}
+            </div>
+
+        </div>
+
+
+
+        <!-- COMPLETED -->
+
+        <div class="card">
+
+            <div class="icon">
+                ✅
+            </div>
+
+            <h3>
+                Completed
+            </h3>
+
+            <div class="number">
+                {{ completed_orders }}
+            </div>
+
+        </div>
+
+
+
+        <!-- TOTAL SPENT -->
+
+        <div class="card">
+
+            <div class="icon">
+                💰
+            </div>
+
+            <h3>
+                Total Spent
+            </h3>
+
+            <div class="number money">
+
+                ₹{{ total_spent }}
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- BUTTONS -->
+
+    <div class="buttons">
+
+
+        <a
+            href="{% url 'food_list' %}"
+            class="button menu-button"
+        >
+
+            🍽️ Browse Menu
+
+        </a>
+
+
+        <a
+            href="{% url 'my_orders' %}"
+            class="button"
+        >
+
+            📋 My Orders
+
+        </a>
+
+
+        <a
+            href="{% url 'logout' %}"
+            class="button logout-button"
+        >
+
+            Logout
+
+        </a>
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

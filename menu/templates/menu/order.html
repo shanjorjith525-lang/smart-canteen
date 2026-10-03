@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Order {{ food.name }} - Smart Canteen</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f6fa;
+            color: #1f2937;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            background: #111827;
+            color: white;
+            padding: 18px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 9px 14px;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            background: #374151;
+        }
+
+
+        /* ================= PAGE ================= */
+
+        .page {
+            min-height: calc(100vh - 70px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+
+        /* ================= ORDER CARD ================= */
+
+        .order-card {
+            width: 100%;
+            max-width: 850px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.10);
+            overflow: hidden;
+        }
+
+
+        /* ================= CARD HEADER ================= */
+
+        .card-header {
+            background: linear-gradient(
+                135deg,
+                #111827,
+                #1d4ed8
+            );
+
+            color: white;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .food-icon {
+            font-size: 55px;
+            margin-bottom: 8px;
+        }
+
+        .card-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .card-header p {
+            margin: 10px 0 0;
+            color: #dbeafe;
+        }
+
+
+        /* ================= CONTENT ================= */
+
+        .content {
+            padding: 35px;
+        }
+
+
+        .food-info {
+            display: grid;
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+
+        .info-box {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+
+
+        .info-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 7px;
+        }
+
+
+        .info-value {
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+
+        .price {
+            color: #16a34a;
+        }
+
+
+        .available {
+            color: #2563eb;
+        }
+
+
+        /* ================= DESCRIPTION ================= */
+
+        .description {
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+            line-height: 1.6;
+            color: #4b5563;
+        }
+
+
+        /* ================= FORM ================= */
+
+        .form-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+
+        .quantity-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+
+        .quantity-input {
+            width: 130px;
+            padding: 13px;
+            border: 2px solid #d1d5db;
+            border-radius: 9px;
+            font-size: 17px;
+            outline: none;
+        }
+
+
+        .quantity-input:focus {
+            border-color: #2563eb;
+        }
+
+
+        .confirm-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: #16a34a;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        .confirm-btn:hover {
+            background: #15803d;
+        }
+
+
+        /* ================= MESSAGES ================= */
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+
+        .message {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+
+        /* ================= BACK BUTTON ================= */
+
+        .back-section {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+
+        .back-btn {
+            display: inline-block;
+            text-decoration: none;
+            color: #2563eb;
+            font-weight: bold;
+            padding: 10px 18px;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            background: #eff6ff;
+        }
+
+
+        .back-btn:hover {
+            background: #dbeafe;
+        }
+
+
+        /* ================= NOTE ================= */
+
+        .note {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 650px) {
+
+            .page {
+                padding: 25px 12px;
+            }
+
+            .content {
+                padding: 22px;
+            }
+
+            .card-header {
+                padding: 25px 15px;
+            }
+
+            .card-header h1 {
+                font-size: 25px;
+            }
+
+            .food-info {
+                grid-template-columns: 1fr;
+            }
+
+            .quantity-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .quantity-input {
+                width: 100%;
+            }
+
+            .confirm-btn {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        🍽️ Smart Canteen
+    </div>
+
+
+    <div class="nav-links">
+
+        <a href="{% url 'food_list' %}">
+            Home
+        </a>
+
+        <a href="{% url 'my_orders' %}">
+            My Orders
+        </a>
+
+        <a href="{% url 'customer_dashboard' %}">
+            Dashboard
+        </a>
+
+        {% if user.is_staff %}
+
+            <a href="{% url 'admin_dashboard' %}">
+                Admin
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</nav>
+
+
+
+<!-- ================= PAGE ================= -->
+
+<div class="page">
+
+
+    <div class="order-card">
+
+
+        <!-- HEADER -->
+
+        <div class="card-header">
+
+            <div class="food-icon">
+                🍛
+            </div>
+
+            <h1>
+                Order {{ food.name }}
+            </h1>
+
+            <p>
+                Confirm your food order
+            </p>
+
+        </div>
+
+
+
+        <!-- CONTENT -->
+
+        <div class="content">
+
+
+            <!-- MESSAGES -->
+
+            {% if messages %}
+
+                <div class="messages">
+
+                    {% for message in messages %}
+
+                        <div class="message">
+                            ⚠️ {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+
+            <!-- FOOD INFO -->
+
+            <div class="food-info">
+
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Food Item
+                    </div>
+
+                    <div class="info-value">
+                        {{ food.name }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Price
+                    </div>
+
+                    <div class="info-value price">
+                        ₹{{ food.price }}
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <div class="info-label">
+                        Available
+                    </div>
+
+                    <div class="info-value available">
+                        {{ food.available_quantity }}
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- DESCRIPTION -->
+
+            {% if food.description %}
+
+                <div class="description">
+
+                    <strong>
+                        About this food
+                    </strong>
+
+                    <br>
+
+                    {{ food.description }}
+
+                </div>
+
+            {% endif %}
+
+
+
+            <!-- ORDER FORM -->
+
+            <div class="form-title">
+                🛒 Select Quantity
+            </div>
+
+
+            <form
+                method="POST"
+            >
+
+                {% csrf_token %}
+
+
+                <div class="quantity-row">
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        class="quantity-input"
+                        value="1"
+                        min="1"
+                        max="{{ food.available_quantity }}"
+                        required
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="confirm-btn"
+                    >
+                        ✅ Confirm Order
+                    </button>
+
+                </div>
+
+            </form>
+
+
+
+            <!-- NOTE -->
+
+            <div class="note">
+
+                Maximum quantity:
+                {{ food.available_quantity }}
+
+                <br>
+
+                Your order will be placed with
+                <strong>Pending</strong> status.
+
+            </div>
+
+
+
+            <!-- BACK -->
+
+            <div class="back-section">
+
+                <a
+                    href="{% url 'food_list' %}"
+                    class="back-btn"
+                >
+                    ← Back to Menu
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

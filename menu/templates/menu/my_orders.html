@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Orders - Smart Canteen</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #333;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: linear-gradient(135deg, #4169e1, #6a5acd);
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .header p {
+            margin-top: 8px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-left: 8px;
+        }
+
+        .nav a:hover {
+            background: rgba(255,255,255,0.35);
+        }
+
+        /* MAIN */
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .welcome h2 {
+            color: #4169e1;
+            margin-top: 0;
+        }
+
+        /* ORDER CARD */
+
+        .order-card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .order-card h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .order-info {
+            margin: 10px 0;
+            font-size: 17px;
+        }
+
+        /* STATUS */
+
+        .status {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: #e8edff;
+            color: #4169e1;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        /* BUTTON */
+
+        .track-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 22px;
+            background: #4169e1;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .track-button:hover {
+            background: #3154c7;
+        }
+
+        .menu-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 22px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        /* NO ORDERS */
+
+        .no-orders {
+            background: white;
+            padding: 50px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .no-orders h2 {
+            color: #4169e1;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <div class="header-content">
+
+        <div>
+
+            <h1>📋 My Orders</h1>
+
+            <p>
+                Smart Canteen
+            </p>
+
+        </div>
+
+
+        <div class="nav">
+
+            <a href="{% url 'food_list' %}">
+                🍽️ Menu
+            </a>
+
+            <a href="{% url 'logout' %}">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- MAIN -->
+
+<div class="container">
+
+
+    <!-- CUSTOMER -->
+
+    <div class="welcome">
+
+        <h2>
+            Welcome, {{ request.user.username }} 👋
+        </h2>
+
+        <p>
+            Here you can view all your previous orders
+            and track their current status.
+        </p>
+
+    </div>
+
+
+
+    {% if orders %}
+
+
+        {% for order in orders %}
+
+
+            <div class="order-card">
+
+
+                <h2>
+                    🍽️ {{ order.food.name }}
+                </h2>
+
+
+                <div class="order-info">
+
+                    <strong>Order ID:</strong>
+                    #{{ order.id }}
+
+                </div>
+
+
+                <div class="order-info">
+
+                    <strong>Quantity:</strong>
+                    {{ order.quantity }}
+
+                </div>
+
+
+                <div class="order-info">
+
+                    <strong>Price:</strong>
+                    ₹{{ order.food.price }}
+
+                </div>
+
+
+                <div class="order-info">
+
+                    <strong>Total:</strong>
+                    ₹{{ order.total_price }}
+
+                </div>
+
+
+                <div class="order-info">
+
+                    <strong>Ordered At:</strong>
+                    {{ order.ordered_at|date:"d M Y, h:i A" }}
+
+                </div>
+
+
+                <div>
+
+                    <span class="status">
+
+                        Status:
+                        {{ order.get_status_display }}
+
+                    </span>
+
+                </div>
+
+
+                <a
+                    href="{% url 'order_status' order.id %}"
+                    class="track-button"
+                >
+
+                    📦 Track My Order
+
+                </a>
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <div class="no-orders">
+
+            <h2>
+                😔 No Orders Yet
+            </h2>
+
+            <p>
+                You haven't placed any orders yet.
+            </p>
+
+            <a
+                href="{% url 'food_list' %}"
+                class="menu-button"
+            >
+
+                🍽️ Browse Menu
+
+            </a>
+
+        </div>
+
+
+    {% endif %}
+
+
+</div>
+
+
+</body>
+
+</html>

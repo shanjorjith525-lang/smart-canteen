@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Canteen - Demand Prediction</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: #cbd5e1;
+        }
+
+
+        /* =========================
+           CONTAINER
+        ========================= */
+
+        .container {
+            width: 92%;
+            max-width: 1250px;
+            margin: 30px auto;
+        }
+
+
+        /* =========================
+           TOP BUTTONS
+        ========================= */
+
+        .top-section {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .top-section h2 {
+            margin-top: 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 17px;
+            margin: 5px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+        }
+
+        .blue {
+            background: #2563eb;
+        }
+
+        .green {
+            background: #16a34a;
+        }
+
+        .dark {
+            background: #374151;
+        }
+
+
+        /* =========================
+           INFO CARDS
+        ========================= */
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .info-card h3 {
+            margin: 0;
+            font-size: 15px;
+            color: #6b7280;
+        }
+
+        .info-card p {
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-section {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            overflow-x: auto;
+        }
+
+        .table-section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .available {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+
+        /* =========================
+           FOOD NAME
+        ========================= */
+
+        .food-name {
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           RECOMMENDATION
+        ========================= */
+
+        .recommendation {
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           EMPTY
+        ========================= */
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #6b7280;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                width: 95%;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<div class="header">
+
+    <h1>
+        🍽️ Smart Canteen
+    </h1>
+
+    <p>
+        Food Demand Prediction & Stock Recommendation
+    </p>
+
+</div>
+
+
+<div class="container">
+
+
+    <!-- =========================
+         TOP SECTION
+    ========================= -->
+
+    <div class="top-section">
+
+        <h2>
+            📊 Demand Prediction
+        </h2>
+
+        <p>
+            This system analyzes previous completed orders
+            and calculates the average daily demand for each food.
+        </p>
+
+        <p>
+            A 20% safety stock is added to generate the
+            recommended preparation quantity.
+        </p>
+
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="btn dark"
+        >
+            ⬅ Admin Dashboard
+        </a>
+
+
+        <a
+            href="{% url 'period_analytics' %}?period=week"
+            class="btn blue"
+        >
+            📊 Weekly Analytics
+        </a>
+
+
+        <a
+            href="{% url 'period_analytics' %}?period=month"
+            class="btn green"
+        >
+            📈 Monthly Analytics
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         INFORMATION CARDS
+    ========================= -->
+
+    <div class="info-cards">
+
+
+        <div class="info-card">
+
+            <h3>
+                📈 Demand Calculation
+            </h3>
+
+            <p>
+                Total completed food quantity ÷
+                number of days with completed orders.
+            </p>
+
+        </div>
+
+
+        <div class="info-card">
+
+            <h3>
+                📦 Safety Stock
+            </h3>
+
+            <p>
+                Recommended quantity includes
+                an additional 20% safety margin.
+            </p>
+
+        </div>
+
+
+        <div class="info-card">
+
+            <h3>
+                ⚠️ Stock Alert
+            </h3>
+
+            <p>
+                Current stock is compared with
+                the recommended quantity.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         PREDICTION TABLE
+    ========================= -->
+
+    <div class="table-section">
+
+        <h2>
+            🍛 Food-wise Demand Prediction
+        </h2>
+
+
+        {% if predictions %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Food
+                    </th>
+
+                    <th>
+                        Total Consumed
+                    </th>
+
+                    <th>
+                        Order Days
+                    </th>
+
+                    <th>
+                        Average Daily Demand
+                    </th>
+
+                    <th>
+                        Recommended Quantity
+                    </th>
+
+                    <th>
+                        Current Stock
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for item in predictions %}
+
+                <tr>
+
+                    <td class="food-name">
+
+                        🍛
+                        {{ item.food.name }}
+
+                    </td>
+
+
+                    <td>
+
+                        {{ item.total_quantity }}
+
+                    </td>
+
+
+                    <td>
+
+                        {{ item.total_days }}
+
+                    </td>
+
+
+                    <td>
+
+                        {{ item.average_daily_demand }}
+
+                    </td>
+
+
+                    <td class="recommendation">
+
+                        {{ item.recommended_quantity }}
+
+                    </td>
+
+
+                    <td>
+
+                        {{ item.current_stock }}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if item.stock_status == 'Low Stock' %}
+
+                            <span class="status low">
+                                ⚠️ Low Stock
+                            </span>
+
+                        {% else %}
+
+                            <span class="status available">
+                                ✅ Stock Available
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        {% else %}
+
+        <div class="empty">
+
+            <h3>
+                No Prediction Data Available
+            </h3>
+
+            <p>
+                Complete some food orders first to generate
+                demand predictions.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<div class="footer">
+
+    Smart Canteen Management System
+
+</div>
+
+
+</body>
+
+</html>

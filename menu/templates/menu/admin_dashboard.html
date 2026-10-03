@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Canteen - Admin Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: #cbd5e1;
+        }
+
+
+        /* =========================
+           CONTAINER
+        ========================= */
+
+        .container {
+            width: 92%;
+            max-width: 1250px;
+            margin: 30px auto;
+        }
+
+
+        /* =========================
+           QUICK ACCESS
+        ========================= */
+
+        .buttons {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .buttons h2 {
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 17px;
+            margin: 5px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+        }
+
+        .blue {
+            background: #2563eb;
+        }
+
+        .green {
+            background: #16a34a;
+        }
+
+        .red {
+            background: #dc2626;
+        }
+
+        .purple {
+            background: #7c3aed;
+        }
+
+        .orange {
+            background: #ea580c;
+        }
+
+        .dark {
+            background: #374151;
+        }
+
+
+        /* =========================
+           SUMMARY CARDS
+        ========================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 23px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .card .value {
+            margin-top: 10px;
+            font-size: 29px;
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           SECTIONS
+        ========================= */
+
+        .section {
+            background: white;
+            padding: 23px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .alert-section {
+            border-left: 5px solid #dc2626;
+        }
+
+        .waste-section {
+            border-left: 5px solid #7c3aed;
+        }
+
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status {
+            display: inline-block;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .preparing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .ready {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .completed {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+
+        /* =========================
+           EMPTY
+        ========================= */
+
+        .empty {
+            text-align: center;
+            padding: 22px;
+            color: #6b7280;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #6b7280;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1000px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 95%;
+            }
+
+            .section {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 700px;
+                font-size: 13px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<div class="header">
+
+    <h1>
+        🍽️ Smart Canteen
+    </h1>
+
+    <p>
+        Admin Management Dashboard
+    </p>
+
+</div>
+
+
+<div class="container">
+
+
+    <!-- =========================
+         QUICK ACCESS
+    ========================= -->
+
+    <div class="buttons">
+
+        <h2>
+            ⚡ Quick Access
+        </h2>
+
+
+        <a
+            href="{% url 'analytics_dashboard' %}"
+            class="btn blue"
+        >
+            📊 Today's Analytics
+        </a>
+
+
+        <a
+            href="{% url 'period_analytics' %}?period=week"
+            class="btn blue"
+        >
+            📅 Weekly Analytics
+        </a>
+
+
+        <a
+            href="{% url 'period_analytics' %}?period=month"
+            class="btn green"
+        >
+            📈 Monthly Analytics
+        </a>
+
+
+        <a
+            href="{% url 'date_report' %}"
+            class="btn purple"
+        >
+            📋 Date-wise Report
+        </a>
+
+
+        <a
+            href="{% url 'demand_prediction' %}"
+            class="btn orange"
+        >
+            🤖 Demand Prediction
+        </a>
+
+
+        <a
+            href="{% url 'waste_analysis' %}"
+            class="btn purple"
+        >
+            🗑️ Waste Analysis
+        </a>
+
+
+        <a
+            href="{% url 'pdf_report' %}"
+            class="btn red"
+        >
+            📄 Today's PDF
+        </a>
+
+
+        <a
+            href="{% url 'excel_report' %}"
+            class="btn green"
+        >
+            📊 Today's Excel
+        </a>
+
+
+        <a
+            href="/admin/"
+            class="btn dark"
+        >
+            ⚙ Django Admin
+        </a>
+
+
+        <a
+            href="{% url 'food_list' %}"
+            class="btn dark"
+        >
+            🍛 View Menu
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         SUMMARY CARDS
+    ========================= -->
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <h3>
+                📦 Total Orders
+            </h3>
+
+            <div class="value">
+                {{ total_orders }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                🍛 Food Consumed
+            </h3>
+
+            <div class="value">
+                {{ food_consumed }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                🗑️ Food Waste
+            </h3>
+
+            <div class="value">
+                {{ total_waste }}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                💰 Total Sales
+            </h3>
+
+            <div class="value">
+                ₹{{ total_sales }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         LOW STOCK ALERT
+    ========================= -->
+
+    <div class="section alert-section">
+
+        <h2>
+            ⚠️ Low Stock Alerts
+        </h2>
+
+
+        {% if low_stock_foods %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Food
+                    </th>
+
+                    <th>
+                        Current Stock
+                    </th>
+
+                    <th>
+                        Recommended Stock
+                    </th>
+
+                    <th>
+                        Alert
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for item in low_stock_foods %}
+
+                <tr>
+
+                    <td>
+                        🍛 {{ item.food.name }}
+                    </td>
+
+
+                    <td>
+                        {{ item.current_stock }}
+                    </td>
+
+
+                    <td>
+                        {{ item.recommended_quantity }}
+                    </td>
+
+
+                    <td>
+
+                        <span class="status low">
+                            ⚠️ Low Stock
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        {% else %}
+
+        <div class="empty">
+
+            <h3>
+                ✅ Stock Status Good
+            </h3>
+
+            <p>
+                No food items currently require additional stock.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         FOOD CONSUMPTION
+    ========================= -->
+
+    <div class="section">
+
+        <h2>
+            🍛 Food Consumption
+        </h2>
+
+
+        {% if food_consumption %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Food
+                    </th>
+
+                    <th>
+                        Consumed Quantity
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for item in food_consumption %}
+
+                <tr>
+
+                    <td>
+                        {{ item.food__name }}
+                    </td>
+
+                    <td>
+                        {{ item.total }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        {% else %}
+
+        <div class="empty">
+            No food consumption data available.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         FOOD WASTE
+    ========================= -->
+
+    <div class="section waste-section">
+
+        <h2>
+            🗑️ Food Waste
+        </h2>
+
+
+        {% if food_waste %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Food
+                    </th>
+
+                    <th>
+                        Waste Quantity
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for item in food_waste %}
+
+                <tr>
+
+                    <td>
+                        {{ item.food__name }}
+                    </td>
+
+                    <td>
+                        {{ item.total }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        {% else %}
+
+        <div class="empty">
+            No food waste data available.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         RECENT ORDERS
+    ========================= -->
+
+    <div class="section">
+
+        <h2>
+            📦 Recent Orders
+        </h2>
+
+
+        {% if recent_orders %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Order ID
+                    </th>
+
+                    <th>
+                        Customer
+                    </th>
+
+                    <th>
+                        Food
+                    </th>
+
+                    <th>
+                        Quantity
+                    </th>
+
+                    <th>
+                        Total
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for order in recent_orders %}
+
+                <tr>
+
+                    <td>
+                        #{{ order.id }}
+                    </td>
+
+
+                    <td>
+
+                        {% if order.customer %}
+
+                            {{ order.customer.username }}
+
+                        {% else %}
+
+                            Guest
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+                        {{ order.food.name }}
+                    </td>
+
+
+                    <td>
+                        {{ order.quantity }}
+                    </td>
+
+
+                    <td>
+                        ₹{{ order.total_price }}
+                    </td>
+
+
+                    <td>
+
+                        {% if order.status == 'pending' %}
+
+                            <span class="status pending">
+                                Pending
+                            </span>
+
+                        {% elif order.status == 'preparing' %}
+
+                            <span class="status preparing">
+                                Preparing
+                            </span>
+
+                        {% elif order.status == 'ready' %}
+
+                            <span class="status ready">
+                                Ready
+                            </span>
+
+                        {% elif order.status == 'completed' %}
+
+                            <span class="status completed">
+                                Completed
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+                        {{ order.ordered_at|date:"d M Y, h:i A" }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        {% else %}
+
+        <div class="empty">
+            No orders available.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         RECENT WASTE
+    ========================= -->
+
+    <div class="section">
+
+        <h2>
+            🗑️ Recent Waste Records
+        </h2>
+
+
+        {% if recent_waste %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Food
+                    </th>
+
+                    <th>
+                        Quantity
+                    </th>
+
+                    <th>
+                        Reason
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for waste in recent_waste %}
+
+                <tr>
+
+                    <td>
+                        {{ waste.food.name }}
+                    </td>
+
+
+                    <td>
+                        {{ waste.quantity }}
+                    </td>
+
+
+                    <td>
+                        {{ waste.get_reason_display }}
+                    </td>
+
+
+                    <td>
+                        {{ waste.date }}
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        {% else %}
+
+        <div class="empty">
+            No waste records available.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<div class="footer">
+
+    Smart Canteen Management System
+
+</div>
+
+
+</body>
+
+</html>
